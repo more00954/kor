@@ -4,11 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ملعبي — المباريات</title>
- <h1>مرحباً بك اضغط علي المباراه للمشاهده!</h1>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f1f5f9; color: #1e293b; }
- 
+  
+  .welcome-msg { text-align: center; padding: 20px; font-size: 18px; color: #1a6e3a; font-weight: bold; }
+
   /* ===== HEADER ===== */
   .site-header {
     background: linear-gradient(135deg, #0a3d1f, #1a6e3a);
@@ -19,7 +20,7 @@
   }
   .site-header h1 { color: #fff; font-size: 20px; font-weight: 500; }
   .logo { font-size: 24px; }
- 
+  
   /* ===== TOP BAR ===== */
   .top-bar {
     display: flex;
@@ -44,7 +45,7 @@
     transition: all .15s;
   }
   .tab.active, .tab:hover { background: #1a6e3a; color: #fff; border-color: #1a6e3a; }
- 
+  
   /* ===== MATCHES GRID ===== */
   .matches-grid {
     display: grid;
@@ -52,7 +53,7 @@
     gap: 16px;
     padding: 1.5rem;
   }
- 
+  
   /* ===== MATCH CARD ===== */
   .match-card {
     background: #fff;
@@ -63,7 +64,7 @@
     cursor: pointer;
   }
   .match-card:hover { transform: translateY(-2px); }
- 
+  
   .card-league {
     background: #0a3d1f;
     color: #a8d8b0;
@@ -83,7 +84,7 @@
   .status-dot.upcoming { background: #f0c040; }
   .status-dot.ended { background: #94a3b8; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
- 
+  
   .card-body { padding: 16px; }
   .teams {
     display: flex;
@@ -98,7 +99,7 @@
   .vs-block { display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .vs { font-size: 11px; color: #94a3b8; }
   .score { font-size: 22px; font-weight: 600; }
- 
+  
   .card-footer {
     border-top: 1px solid #f1f5f9;
     padding: 10px 16px;
@@ -107,7 +108,7 @@
     justify-content: space-between;
   }
   .match-time { font-size: 12px; color: #64748b; }
- 
+  
   .watch-btn {
     padding: 5px 14px;
     border-radius: 8px;
@@ -120,7 +121,7 @@
   .watch-btn.live { background: #e24b4a; color: #fff; }
   .watch-btn.upcoming { background: #1a6e3a; color: #fff; }
   .watch-btn.ended { background: #f1f5f9; color: #94a3b8; cursor: default; }
- 
+  
   /* ===== NEWS SECTION ===== */
   .news-section { padding: 0 1.5rem 2rem; }
   .news-section h2 {
@@ -184,12 +185,14 @@
 </style>
 </head>
 <body>
- 
+
 <header class="site-header">
   <span class="logo">⚽</span>
   <h1>ملعبي — المباريات المباشرة</h1>
 </header>
- 
+
+<div class="welcome-msg">مرحباً بك اضغط علي المباراه للمشاهده!</div>
+
 <div class="top-bar">
   <div class="filter-tabs">
     <button class="tab active" onclick="filterMatches('all', this)">الكل</button>
@@ -198,231 +201,52 @@
     <button class="tab" onclick="filterMatches('ended', this)">منتهية</button>
   </div>
 </div>
- 
+
 <div class="matches-grid" id="matchesGrid"></div>
- 
-<!-- ===== قسم الأخبار ===== -->
+
 <section class="news-section">
   <h2>📰 آخر الأخبار</h2>
   <div class="news-grid" id="newsGrid"></div>
 </section>
- 
+
 <script>
-  /* ============================================================
-     بيانات المباريات — عدّل هنا براحتك
-     ============================================================
-     كل مباراة عبارة عن object فيه:
-       league      : اسم البطولة
-       leagueIcon  : إيموجي البطولة
-       team1       : اسم الفريق الأول
-       flag1       : إيموجي / علم الفريق الأول
-       team2       : اسم الفريق الثاني
-       flag2       : إيموجي / علم الفريق الثاني
-       score       : النتيجة (أو "- vs -" لو لسه ما بدأتش)
-       time        : التوقيت أو الدقيقة اللي المباراة فيها (مثلاً "21:00" أو "75'")
-       status      : الحالة — "live" أو "upcoming" أو "ended"
-       link        : رابط موقع البث — لو مفيش خليه ""
-     ============================================================ */
- const matches = [
-    {
-      league: "المجموعة ل - الجولة 2",
-      leagueIcon: "⚽",
-      team1: "إنجلترا",
-      flag1: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      team2: "غانا",
-      flag2: "🇬🇭",
-      score: "vs",
-      time: "23/06 11:00 م",
-      status: "upcoming",
-      link: "#"
-    },
-    {
-      league: "المجموعة ل - الجولة 2",
-      leagueIcon: "⚽",
-      team1: "بنما",
-      flag1: "🇵🇦",
-      team2: "كرواتيا",
-      flag2: "🇭🇷",
-      score: "vs",
-      time: "24/06 02:00 ص",
-      status: "upcoming",
-      link: "#"
-    },
-    {
-      league: "المجموعة ك - الجولة 2",
-      leagueIcon: "⚽",
-      team1: "كولومبيا",
-      flag1: "🇨🇴",
-      team2: "الكونغو الديمقراطية",
-      flag2: "🇨🇩",
-      score: "vs",
-      time: "24/06 05:00 ص",
-      status: "upcoming",
-      link: "#"
-    },
-    {
-      league: "المجموعة ب - الجولة 3",
-      leagueIcon: "⚽",
-      team1: "سويسرا",
-      flag1: "🇨🇭",
-      team2: "كندا",
-      flag2: "🇨🇦",
-      score: "vs",
-      time: "24/06 10:00 م",
-      status: "upcoming",
-      link: "#"
-    },
-    {
-      league: "المجموعة ب - الجولة 3",
-      leagueIcon: "⚽",
-      team1: "البوسنة والهرسك",
-      flag1: "🇧🇦",
-      team2: "قطر",
-      flag2: "🇶🇦",
-      score: "vs",
-      time: "24/06 10:00 م",
-      status: "upcoming",
-      link: 
-    },
+  const matches = [
+    { league: "المجموعة ل - الجولة 2", leagueIcon: "⚽", team1: "إنجلترا", flag1: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", team2: "غانا", flag2: "🇬🇭", score: "vs", time: "23/06 11:00 م", status: "upcoming", link: "#" },
+    { league: "المجموعة ل - الجولة 2", leagueIcon: "⚽", team1: "بنما", flag1: "🇵🇦", team2: "كرواتيا", flag2: "🇭🇷", score: "vs", time: "24/06 02:00 ص", status: "upcoming", link: "#" },
+    { league: "المجموعة ك - الجولة 2", leagueIcon: "⚽", team1: "كولومبيا", flag1: "🇨🇴", team2: "الكونغو الديمقراطية", flag2: "🇨🇩", score: "vs", time: "24/06 05:00 ص", status: "upcoming", link: "#" },
+    { league: "المجموعة ب - الجولة 3", leagueIcon: "⚽", team1: "سويسرا", flag1: "🇨🇭", team2: "كندا", flag2: "🇨🇦", score: "vs", time: "24/06 10:00 م", status: "upcoming", link: "#" },
+    { league: "المجموعة ب - الجولة 3", leagueIcon: "⚽", team1: "البوسنة والهرسك", flag1: "🇧🇦", team2: "قطر", flag2: "🇶🇦", score: "vs", time: "24/06 10:00 م", status: "upcoming", link: "" }
   ];
-  /* ============================================================
-     نهاية البيانات
-     ============================================================ */
- 
- 
+
   let currentFilter = "all";
- 
+
   function filterMatches(f, btn) {
     currentFilter = f;
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     renderMatches();
   }
- 
+
   function renderMatches() {
     const grid = document.getElementById('matchesGrid');
-    const filtered = currentFilter === 'all'
-      ? matches
-      : matches.filter(m => m.status === currentFilter);
- 
-    if (!filtered.length) {
-      grid.innerHTML = '<p style="padding:2rem;color:#94a3b8">لا توجد مباريات</p>';
-      return;
-    }
- 
-    grid.innerHTML = filtered.map(m => {
+    const filtered = currentFilter === 'all' ? matches : matches.filter(m => m.status === currentFilter);
+    grid.innerHTML = filtered.length ? filtered.map(m => {
       const statusLabel = m.status === 'live' ? 'مباشر' : m.status === 'upcoming' ? 'قادم' : 'منتهية';
-      let btnHTML = '';
-      if (m.status === 'ended') {
-        btnHTML = `<button class="watch-btn ended" disabled>انتهت</button>`;
-      } else if (m.link) {
-        const label = m.status === 'live' ? '▶ شاهد الآن' : '🔔 تذكير';
-        btnHTML = `<button class="watch-btn ${m.status}" onclick="window.open('${m.link}','_blank')">${label}</button>`;
-      } else {
-        btnHTML = `<button class="watch-btn upcoming" style="background:#94a3b8" disabled>لا يوجد رابط</button>`;
-      }
- 
-      return `
-        <div class="match-card">
-          <div class="card-league">
-            <span>${m.leagueIcon} ${m.league}</span>
-            <span><span class="status-dot ${m.status}"></span>${statusLabel}</span>
-          </div>
-          <div class="card-body">
-            <div class="teams">
-              <div class="team">
-                <span class="team-flag">${m.flag1}</span>
-                <span class="team-name">${m.team1}</span>
-              </div>
-              <div class="vs-block">
-                <span class="vs">VS</span>
-                <span class="score">${m.score}</span>
-              </div>
-              <div class="team">
-                <span class="team-flag">${m.flag2}</span>
-                <span class="team-name">${m.team2}</span>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer">
-            <span class="match-time">⏱ ${m.time}</span>
-            ${btnHTML}
-          </div>
-        </div>
-      `;
-    }).join('');
+      const btnHTML = m.status === 'ended' ? `<button class="watch-btn ended" disabled>انتهت</button>` : m.link ? `<button class="watch-btn ${m.status}" onclick="window.open('${m.link}','_blank')">${m.status === 'live' ? '▶ شاهد الآن' : '🔔 تذكير'}</button>` : `<button class="watch-btn" style="background:#94a3b8" disabled>لا يوجد رابط</button>`;
+      return `<div class="match-card"><div class="card-league"><span>${m.leagueIcon} ${m.league}</span><span><span class="status-dot ${m.status}"></span>${statusLabel}</span></div><div class="card-body"><div class="teams"><div class="team"><span class="team-flag">${m.flag1}</span><span class="team-name">${m.team1}</span></div><div class="vs-block"><span class="vs">VS</span><span class="score">${m.score}</span></div><div class="team"><span class="team-flag">${m.flag2}</span><span class="team-name">${m.team2}</span></div></div></div><div class="card-footer"><span class="match-time">⏱ ${m.time}</span>${btnHTML}</div></div>`;
+    }).join('') : '<p style="padding:2rem;color:#94a3b8">لا توجد مباريات</p>';
   }
- 
+
   renderMatches();
- 
-  /* ============================================================
-     بيانات الأخبار — عدّل هنا براحتك
-     ============================================================
-     كل خبر فيه:
-       tag   : التصنيف (مثلاً "تشيلسي" أو "ميركاتو")
-       title : عنوان الخبر
-       date  : التاريخ أو الوقت
-       img   : إيموجي بيظهر بدل الصورة — أو حط رابط صورة في خاصية src جوه الكود
-       link  : الرابط اللي بيروح له لما تضغط على الخبر — لو مفيش خليه "#"
-     ============================================================ */
+
   const news = [
-    {
-      tag: "ميركاتو",
-      title: "ريال مدريد يقترب من ضم نجم مانشستر سيتي في صفقة تاريخية",
-      date: "منذ ساعتين",
-      img: "",
-      link: "#"
-    },
-    
-    {
-      tag: "دوري أبطال أوروبا",
-      title: "برشلونة يتعثر ويخسر فرصة التأهل المبكر لدور الـ 16",
-      date: "أمس",
-      img: "🏆",
-      link: "#"
-    },
-    {
-      tag: "إصابات",
-      title: "غياب مبابي عن مباريات باريس القادمة بسبب إصابة في الركبة",
-      date: "أمس",
-      img: "🏥",
-      link: "#"
-    },
-    {
-      tag: "الدوري الإنجليزي",
-      title: "مانشستر يونايتد يتعاقد مع مدرب جديد بعد سلسلة النتائج السلبية",
-      date: "منذ يومين",
-      img: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      link: "#"
-    },
-    {
-      tag: "منتخبات",
-      title: "مصر تحقق فوزاً ثميناً في تصفيات كأس العالم وتقترب من التأهل",
-      date: "منذ يومين",
-      img: "🇪🇬",
-      link: "#"
-    },
+    { tag: "ميركاتو", title: "ريال مدريد يقترب من ضم نجم مانشستر سيتي في صفقة تاريخية", date: "منذ ساعتين", img: "⚽", link: "#" },
+    { tag: "دوري أبطال أوروبا", title: "برشلونة يتعثر ويخسر فرصة التأهل المبكر لدور الـ 16", date: "أمس", img: "🏆", link: "#" }
   ];
-  /* ============================================================
-     نهاية بيانات الأخبار
-     ============================================================ */
- 
+
   function renderNews() {
-    const grid = document.getElementById('newsGrid');
-    grid.innerHTML = news.map(n => `
-      <div class="news-card">
-        <a href="${n.link}" target="_blank">
-          <div class="news-img">${n.img}</div>
-          <div class="news-body">
-            <span class="news-tag">${n.tag}</span>
-            <p class="news-title">${n.title}</p>
-            <span class="news-meta">🕒 ${n.date}</span>
-          </div>
-        </a>
-      </div>
-    `).join('');
+    document.getElementById('newsGrid').innerHTML = news.map(n => `<div class="news-card"><a href="${n.link}" target="_blank"><div class="news-img">${n.img}</div><div class="news-body"><span class="news-tag">${n.tag}</span><p class="news-title">${n.title}</p><span class="news-meta">🕒 ${n.date}</span></div></a></div>`).join('');
   }
- 
   renderNews();
 </script>
 </body>
