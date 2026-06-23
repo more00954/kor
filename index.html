@@ -1,225 +1,474 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ملعبي — المباريات</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f1f5f9; color: #1e293b; }
-  
-  .welcome-msg { text-align: center; padding: 20px; font-size: 18px; color: #1a6e3a; font-weight: bold; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ملعبي — المباريات المباشرة</title>
+  <!-- Video.js CSS -->
+  <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+  <style>
+    /* Reset & base */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, sans-serif; 
+      background: #f1f5f9; 
+      color: #1e293b; 
+    }
+    
+    /* ===== واجهة المباريات (الصفحة الرئيسية) ===== */
+    #mainPage {
+      display: block;
+    }
+    #watchPage {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      color: white;
+      padding: 20px;
+    }
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-  /* ===== HEADER ===== */
-  .site-header {
-    background: linear-gradient(135deg, #0a3d1f, #1a6e3a);
-    padding: 1rem 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .site-header h1 { color: #fff; font-size: 20px; font-weight: 500; }
-  .logo { font-size: 24px; }
-  
-  /* ===== TOP BAR ===== */
-  .top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid #e2e8f0;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
-  .tab {
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid #cbd5e1;
-    background: transparent;
-    color: #64748b;
-    font-size: 13px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all .15s;
-  }
-  .tab.active, .tab:hover { background: #1a6e3a; color: #fff; border-color: #1a6e3a; }
-  
-  /* ===== MATCHES GRID ===== */
-  .matches-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    padding: 1.5rem;
-  }
-  
-  /* ===== MATCH CARD ===== */
-  .match-card {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform .15s;
-    cursor: pointer;
-  }
-  .match-card:hover { transform: translateY(-2px); }
-  
-  .card-league {
-    background: #0a3d1f;
-    color: #a8d8b0;
-    font-size: 11px;
-    padding: 6px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .status-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-left: 5px;
-  }
-  .status-dot.live { background: #e24b4a; animation: blink 1s infinite; }
-  .status-dot.upcoming { background: #f0c040; }
-  .status-dot.ended { background: #94a3b8; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-  
-  .card-body { padding: 16px; }
-  .teams {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .team { text-align: center; flex: 1; }
-  .team-flag { font-size: 28px; display: block; margin-bottom: 4px; }
-  .team-name { font-size: 12px; color: #64748b; font-weight: 500; }
-  .vs-block { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-  .vs { font-size: 11px; color: #94a3b8; }
-  .score { font-size: 22px; font-weight: 600; }
-  
-  .card-footer {
-    border-top: 1px solid #f1f5f9;
-    padding: 10px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .match-time { font-size: 12px; color: #64748b; }
-  
-  .watch-btn {
-    padding: 5px 14px;
-    border-radius: 8px;
-    border: none;
-    font-size: 12px;
-    font-family: inherit;
-    cursor: pointer;
-    font-weight: 500;
-  }
-  .watch-btn.live { background: #e24b4a; color: #fff; }
-  .watch-btn.upcoming { background: #1a6e3a; color: #fff; }
-  .watch-btn.ended { background: #f1f5f9; color: #94a3b8; cursor: default; }
-  
-  /* ===== NEWS SECTION ===== */
-  .news-section { padding: 0 1.5rem 2rem; }
-  .news-section h2 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .news-section h2::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #e2e8f0;
-  }
-  .news-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 14px;
-  }
-  .news-card {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform .15s;
-  }
-  .news-card:hover { transform: translateY(-2px); }
-  .news-card a { text-decoration: none; color: inherit; display: block; }
-  .news-img {
-    width: 100%;
-    height: 140px;
-    object-fit: cover;
-    display: block;
-    background: #e2e8f0;
-    font-size: 40px;
-    text-align: center;
-    line-height: 140px;
-  }
-  .news-body { padding: 12px; }
-  .news-tag {
-    display: inline-block;
-    background: #dcfce7;
-    color: #166534;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 20px;
-    margin-bottom: 6px;
-  }
-  .news-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: #1e293b;
-    line-height: 1.5;
-    margin-bottom: 6px;
-  }
-  .news-meta { font-size: 11px; color: #94a3b8; }
-</style>
+    .welcome-msg { text-align: center; padding: 20px; font-size: 18px; color: #1a6e3a; font-weight: bold; }
+
+    /* ===== HEADER ===== */
+    .site-header {
+      background: linear-gradient(135deg, #0a3d1f, #1a6e3a);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .site-header h1 { color: #fff; font-size: 20px; font-weight: 500; }
+    .logo { font-size: 24px; }
+    
+    /* ===== TOP BAR ===== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #cbd5e1;
+      background: transparent;
+      color: #64748b;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .tab.active, .tab:hover { background: #1a6e3a; color: #fff; border-color: #1a6e3a; }
+    
+    /* ===== MATCHES GRID ===== */
+    .matches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      padding: 1.5rem;
+    }
+    
+    /* ===== MATCH CARD ===== */
+    .match-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform .15s;
+      cursor: pointer;
+    }
+    .match-card:hover { transform: translateY(-2px); }
+    
+    .card-league {
+      background: #0a3d1f;
+      color: #a8d8b0;
+      font-size: 11px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-left: 5px;
+    }
+    .status-dot.live { background: #e24b4a; animation: blink 1s infinite; }
+    .status-dot.upcoming { background: #f0c040; }
+    .status-dot.ended { background: #94a3b8; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    
+    .card-body { padding: 16px; }
+    .teams {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .team { text-align: center; flex: 1; }
+    .team-flag { font-size: 28px; display: block; margin-bottom: 4px; }
+    .team-name { font-size: 12px; color: #64748b; font-weight: 500; }
+    .vs-block { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .vs { font-size: 11px; color: #94a3b8; }
+    .score { font-size: 22px; font-weight: 600; }
+    
+    .card-footer {
+      border-top: 1px solid #f1f5f9;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .match-time { font-size: 12px; color: #64748b; }
+    
+    .watch-btn {
+      padding: 5px 14px;
+      border-radius: 8px;
+      border: none;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .watch-btn.live { background: #e24b4a; color: #fff; }
+    .watch-btn.upcoming { background: #1a6e3a; color: #fff; }
+    .watch-btn.ended { background: #f1f5f9; color: #94a3b8; cursor: default; }
+    
+    /* ===== NEWS SECTION ===== */
+    .news-section { padding: 0 1.5rem 2rem; }
+    .news-section h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .news-section h2::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .news-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform .15s;
+    }
+    .news-card:hover { transform: translateY(-2px); }
+    .news-card a { text-decoration: none; color: inherit; display: block; }
+    .news-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      background: #e2e8f0;
+      font-size: 40px;
+      text-align: center;
+      line-height: 140px;
+    }
+    .news-body { padding: 12px; }
+    .news-tag {
+      display: inline-block;
+      background: #dcfce7;
+      color: #166534;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+    .news-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+    .news-meta { font-size: 11px; color: #94a3b8; }
+
+    /* ===== صفحة المشاهدة ===== */
+    #watchPage h1 {
+      margin-top: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .video-container {
+      margin-top: 20px;
+      border: 5px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      width: 90%;
+      max-width: 720px;
+    }
+    .video-container video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .info-section {
+      margin-top: 30px;
+      width: 90%;
+      max-width: 800px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+    }
+    .info-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .info-section .match-details {
+      font-size: 1.1rem;
+      margin: 10px 0;
+      opacity: 0.9;
+    }
+    .info-section .match-details span {
+      display: inline-block;
+      margin: 0 10px;
+    }
+    .info-section p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.5);
+      color: white;
+      padding: 10px 25px;
+      border-radius: 40px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: 0.2s;
+    }
+    .back-btn:hover {
+      background: rgba(255,255,255,0.4);
+    }
+    /* جعل الفيديو متجاوب */
+    .video-js {
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 16 / 9;
+    }
+    .vjs-tech {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  </style>
 </head>
 <body>
 
-<header class="site-header">
-  <span class="logo">⚽</span>
-  <h1>ملعبي — المباريات المباشرة</h1>
-</header>
+<!-- ========== الصفحة الرئيسية (المباريات) ========== -->
+<div id="mainPage">
+  <header class="site-header">
+    <span class="logo">⚽</span>
+    <h1>ملعبي — المباريات المباشرة</h1>
+  </header>
 
-<div class="welcome-msg">مرحباً بك اضغط علي المباراه للمشاهده!</div>
+  <div class="welcome-msg">مرحباً بك اضغط علي المباراه للمشاهده!</div>
 
-<div class="top-bar">
-  <div class="filter-tabs">
-    <button class="tab active" onclick="filterMatches('all', this)">الكل</button>
-    <button class="tab" onclick="filterMatches('live', this)">مباشر</button>
-    <button class="tab" onclick="filterMatches('upcoming', this)">قادمة</button>
-    <button class="tab" onclick="filterMatches('ended', this)">منتهية</button>
+  <div class="top-bar">
+    <div class="filter-tabs">
+      <button class="tab active" onclick="filterMatches('all', this)">الكل</button>
+      <button class="tab" onclick="filterMatches('live', this)">مباشر</button>
+      <button class="tab" onclick="filterMatches('upcoming', this)">قادمة</button>
+      <button class="tab" onclick="filterMatches('ended', this)">منتهية</button>
+    </div>
+  </div>
+
+  <div class="matches-grid" id="matchesGrid"></div>
+
+  <section class="news-section">
+    <h2>📰 آخر الأخبار</h2>
+    <div class="news-grid" id="newsGrid"></div>
+  </section>
+</div>
+
+<!-- ========== صفحة المشاهدة ========== -->
+<div id="watchPage">
+  <h1 id="watchTitle">Kooravo</h1>
+
+  <div class="video-container">
+    <video-js id="my-video" class="video-js vjs-big-play-centered" controls preload="auto">
+      <source src="" type="application/x-mpegURL">
+    </video-js>
+  </div>
+
+  <div class="info-section">
+    <h2 id="matchHeader">كأس العالم 2026</h2>
+    <div class="match-details" id="matchDetails">
+      <span id="matchTeams">🏴 إنجلترا 🆚 غانا 🇬🇭</span>
+      <span id="matchTime">⏱ 23/06 11:00 م</span>
+      <span id="matchLeague">⚽ المجموعة ل - الجولة 2</span>
+    </div>
+    <p>تابع معنا أجواء كأس العالم الحماسية. تغطية حصرية لأهم المباريات، ملخصات الأهداف، وتحليلات لحظة بلحظة للنجوم والمنتخبات العالمية.</p>
+    <p><strong>Kooravo:</strong> وجهتك الأولى لكل ما يخص كرة القدم العالمية في مكان واحد.</p>
+    <button class="back-btn" onclick="goBackToMatches()">⬅ العودة للمباريات</button>
   </div>
 </div>
 
-<div class="matches-grid" id="matchesGrid"></div>
-
-<section class="news-section">
-  <h2>📰 آخر الأخبار</h2>
-  <div class="news-grid" id="newsGrid"></div>
-</section>
-
+<script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 <script>
+  // ===== بيانات المباريات مع معرفات فريدة =====
   const matches = [
-    { league: "المجموعة ل - الجولة 2", leagueIcon: "⚽", team1: "إنجلترا", flag1: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", team2: "غانا", flag2: "🇬🇭", score: "vs", time: "23/06 11:00 م", status: "upcoming", link: "#" },
-    { league: "المجموعة ل - الجولة 2", leagueIcon: "⚽", team1: "بنما", flag1: "🇵🇦", team2: "كرواتيا", flag2: "🇭🇷", score: "vs", time: "24/06 02:00 ص", status: "upcoming", link: "#" },
-    { league: "المجموعة ك - الجولة 2", leagueIcon: "⚽", team1: "كولومبيا", flag1: "🇨🇴", team2: "الكونغو الديمقراطية", flag2: "🇨🇩", score: "vs", time: "24/06 05:00 ص", status: "upcoming", link: "#" },
-    { league: "المجموعة ب - الجولة 3", leagueIcon: "⚽", team1: "سويسرا", flag1: "🇨🇭", team2: "كندا", flag2: "🇨🇦", score: "vs", time: "24/06 10:00 م", status: "upcoming", link: "#" },
-    { league: "المجموعة ب - الجولة 3", leagueIcon: "⚽", team1: "البوسنة والهرسك", flag1: "🇧🇦", team2: "قطر", flag2: "🇶🇦", score: "vs", time: "24/06 10:00 م", status: "upcoming", link: "" }
+    { 
+      id: 1,
+      league: "المجموعة ل - الجولة 2", 
+      leagueIcon: "⚽", 
+      team1: "إنجلترا", 
+      flag1: "🏴", 
+      team2: "غانا", 
+      flag2: "🇬🇭", 
+      score: "vs", 
+      time: "23/06 11:00 م", 
+      status: "upcoming", 
+      streamUrl: "https://s3.us-east-2.amazonaws.com/cdng101/hls/0/stream_960x540_2000k.m3u8"
+    },
+    { 
+      id: 2,
+      league: "المجموعة ل - الجولة 2", 
+      leagueIcon: "⚽", 
+      team1: "بنما", 
+      flag1: "🇵🇦", 
+      team2: "كرواتيا", 
+      flag2: "🇭🇷", 
+      score: "vs", 
+      time: "24/06 02:00 ص", 
+      status: "upcoming", 
+      streamUrl: "https://s3.us-east-2.amazonaws.com/cdng101/hls/0/stream_960x540_2000k.m3u8"
+    },
+    { 
+      id: 3,
+      league: "المجموعة ك - الجولة 2", 
+      leagueIcon: "⚽", 
+      team1: "كولومبيا", 
+      flag1: "🇨🇴", 
+      team2: "الكونغو الديمقراطية", 
+      flag2: "🇨🇩", 
+      score: "vs", 
+      time: "24/06 05:00 ص", 
+      status: "upcoming", 
+      streamUrl: "https://s3.us-east-2.amazonaws.com/cdng101/hls/0/stream_960x540_2000k.m3u8"
+    },
+    { 
+      id: 4,
+      league: "المجموعة ب - الجولة 3", 
+      leagueIcon: "⚽", 
+      team1: "سويسرا", 
+      flag1: "🇨🇭", 
+      team2: "كندا", 
+      flag2: "🇨🇦", 
+      score: "vs", 
+      time: "24/06 10:00 م", 
+      status: "upcoming", 
+      streamUrl: "https://s3.us-east-2.amazonaws.com/cdng101/hls/0/stream_960x540_2000k.m3u8"
+    },
+    { 
+      id: 5,
+      league: "المجموعة ب - الجولة 3", 
+      leagueIcon: "⚽", 
+      team1: "البوسنة والهرسك", 
+      flag1: "🇧🇦", 
+      team2: "قطر", 
+      flag2: "🇶🇦", 
+      score: "vs", 
+      time: "24/06 10:00 م", 
+      status: "upcoming", 
+      streamUrl: "https://s3.us-east-2.amazonaws.com/cdng101/hls/0/stream_960x540_2000k.m3u8"
+    }
   ];
 
   let currentFilter = "all";
+  let currentMatchId = null;
+  let videoPlayer = null;
 
+  // ===== التبديل بين الصفحات =====
+  function showWatchPage(matchId) {
+    currentMatchId = matchId;
+    const match = matches.find(m => m.id === matchId);
+    if (!match) return;
+
+    // تحديث معلومات المباراة في صفحة المشاهدة
+    document.getElementById('matchHeader').textContent = `${match.flag1} ${match.team1} 🆚 ${match.team2} ${match.flag2}`;
+    document.getElementById('matchTeams').innerHTML = `${match.flag1} ${match.team1} 🆚 ${match.team2} ${match.flag2}`;
+    document.getElementById('matchTime').textContent = `⏱ ${match.time}`;
+    document.getElementById('matchLeague').textContent = `${match.leagueIcon} ${match.league}`;
+    document.getElementById('watchTitle').textContent = `${match.team1} vs ${match.team2} | Kooravo`;
+
+    // إظهار صفحة المشاهدة وإخفاء الرئيسية
+    document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('watchPage').style.display = 'flex';
+
+    // تهيئة أو تحديث مشغل الفيديو
+    const videoElement = document.getElementById('my-video');
+    
+    // إذا كان المشغل موجوداً، قم بتحديث المصدر
+    if (videoPlayer) {
+      videoPlayer.src({ src: match.streamUrl, type: 'application/x-mpegURL' });
+      videoPlayer.load();
+    } else {
+      // تهيئة المشغل لأول مرة
+      videoPlayer = videojs(videoElement, {
+        controls: true,
+        autoplay: false,
+        preload: 'auto'
+      });
+      videoPlayer.src({ src: match.streamUrl, type: 'application/x-mpegURL' });
+      videoPlayer.load();
+    }
+
+    // تحديث عنوان الصفحة
+    document.title = `${match.team1} vs ${match.team2} | Kooravo`;
+    
+    // تحديث رابط الصفحة
+    const url = new URL(window.location);
+    url.searchParams.set('match', matchId);
+    window.history.pushState({ matchId: matchId }, '', url);
+  }
+
+  function goBackToMatches() {
+    document.getElementById('watchPage').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'block';
+    
+    // إيقاف الفيديو
+    if (videoPlayer) {
+      videoPlayer.pause();
+    }
+    
+    // إزالة المعامل من الرابط
+    const url = new URL(window.location);
+    url.searchParams.delete('match');
+    window.history.pushState({}, '', url);
+    document.title = 'ملعبي — المباريات المباشرة';
+  }
+
+  // ===== عرض المباريات =====
   function filterMatches(f, btn) {
     currentFilter = f;
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -230,24 +479,74 @@
   function renderMatches() {
     const grid = document.getElementById('matchesGrid');
     const filtered = currentFilter === 'all' ? matches : matches.filter(m => m.status === currentFilter);
-    grid.innerHTML = filtered.length ? filtered.map(m => {
+    grid.innerHTML = filtered.length ? filtered.map((m) => {
       const statusLabel = m.status === 'live' ? 'مباشر' : m.status === 'upcoming' ? 'قادم' : 'منتهية';
-      const btnHTML = m.status === 'ended' ? `<button class="watch-btn ended" disabled>انتهت</button>` : m.link ? `<button class="watch-btn ${m.status}" onclick="window.open('${m.link}','_blank')">${m.status === 'live' ? '▶ شاهد الآن' : '🔔 تذكير'}</button>` : `<button class="watch-btn" style="background:#94a3b8" disabled>لا يوجد رابط</button>`;
-      return `<div class="match-card"><div class="card-league"><span>${m.leagueIcon} ${m.league}</span><span><span class="status-dot ${m.status}"></span>${statusLabel}</span></div><div class="card-body"><div class="teams"><div class="team"><span class="team-flag">${m.flag1}</span><span class="team-name">${m.team1}</span></div><div class="vs-block"><span class="vs">VS</span><span class="score">${m.score}</span></div><div class="team"><span class="team-flag">${m.flag2}</span><span class="team-name">${m.team2}</span></div></div></div><div class="card-footer"><span class="match-time">⏱ ${m.time}</span>${btnHTML}</div></div>`;
+      const btnHTML = m.status === 'ended' ? `<button class="watch-btn ended" disabled>انتهت</button>` : 
+                     `<button class="watch-btn ${m.status}" onclick="event.stopPropagation(); showWatchPage(${m.id});">${m.status === 'live' ? '▶ شاهد الآن' : '🔔 تذكير'}</button>`;
+      return `<div class="match-card" onclick="showWatchPage(${m.id});">
+                <div class="card-league">
+                  <span>${m.leagueIcon} ${m.league}</span>
+                  <span><span class="status-dot ${m.status}"></span>${statusLabel}</span>
+                </div>
+                <div class="card-body">
+                  <div class="teams">
+                    <div class="team"><span class="team-flag">${m.flag1}</span><span class="team-name">${m.team1}</span></div>
+                    <div class="vs-block"><span class="vs">VS</span><span class="score">${m.score}</span></div>
+                    <div class="team"><span class="team-flag">${m.flag2}</span><span class="team-name">${m.team2}</span></div>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <span class="match-time">⏱ ${m.time}</span>
+                  ${btnHTML}
+                </div>
+              </div>`;
     }).join('') : '<p style="padding:2rem;color:#94a3b8">لا توجد مباريات</p>';
   }
 
   renderMatches();
 
+  // ===== الأخبار =====
   const news = [
     { tag: "ميركاتو", title: "ريال مدريد يقترب من ضم نجم مانشستر سيتي في صفقة تاريخية", date: "منذ ساعتين", img: "⚽", link: "#" },
     { tag: "دوري أبطال أوروبا", title: "برشلونة يتعثر ويخسر فرصة التأهل المبكر لدور الـ 16", date: "أمس", img: "🏆", link: "#" }
   ];
 
   function renderNews() {
-    document.getElementById('newsGrid').innerHTML = news.map(n => `<div class="news-card"><a href="${n.link}" target="_blank"><div class="news-img">${n.img}</div><div class="news-body"><span class="news-tag">${n.tag}</span><p class="news-title">${n.title}</p><span class="news-meta">🕒 ${n.date}</span></div></a></div>`).join('');
+    document.getElementById('newsGrid').innerHTML = news.map(n => 
+      `<div class="news-card"><a href="${n.link}" target="_blank"><div class="news-img">${n.img}</div><div class="news-body"><span class="news-tag">${n.tag}</span><p class="news-title">${n.title}</p><span class="news-meta">🕒 ${n.date}</span></div></a></div>`
+    ).join('');
   }
   renderNews();
+
+  // ===== معالجة الروابط المباشرة =====
+  function handleUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const matchId = urlParams.get('match');
+    if (matchId) {
+      const match = matches.find(m => m.id === parseInt(matchId));
+      if (match) {
+        // تأخير بسيط لضمان تحميل الصفحة
+        setTimeout(() => {
+          showWatchPage(parseInt(matchId));
+        }, 100);
+      }
+    }
+  }
+
+  // ===== الاستماع لتغيير الـ URL =====
+  window.addEventListener('popstate', function(event) {
+    if (event.state && event.state.matchId) {
+      showWatchPage(event.state.matchId);
+    } else {
+      goBackToMatches();
+    }
+  });
+
+  // ===== تهيئة الصفحة =====
+  window.addEventListener('load', function() {
+    // معالجة معاملات URL
+    handleUrlParams();
+  });
 </script>
 </body>
 </html>
