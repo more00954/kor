@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ملعبي — المباريات</title>
+ <h1>مرحباً بك اضغط علي المباراه للمشاهده!</h1>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f1f5f9; color: #1e293b; }
@@ -222,54 +223,66 @@
        status      : الحالة — "live" أو "upcoming" أو "ended"
        link        : رابط موقع البث — لو مفيش خليه ""
      ============================================================ */
-  const matches = [
+ const matches = [
     {
-      league: "دوري أبطال أوروبا",
-      leagueIcon: "🏆",
-      team1: "ريال مدريد",
-      flag1: "🇪🇸",
-      team2: "مانشستر سيتي",
-      flag2: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      league: "المجموعة ل - الجولة 2",
+      leagueIcon: "⚽",
+      team1: "إنجلترا",
+      flag1: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      team2: "غانا",
+      flag2: "🇬🇭",
       score: "vs",
-      time: "75'",
-      status: "live",
-      link: "https://example.com/watch"   // ← حط رابط البث هنا
-    },
-    {
-      league: "الدوري المصري",
-      leagueIcon: "🇪🇬",
-      team1: "الأهلي",
-      flag1: "",
-      team2: "الزمالك",
-      flag2: "",
-      score: "- vs -",
-      time: "21:00",
+      time: "23/06 11:00 م",
       status: "upcoming",
-      link: "https://example.com/ahly-zamalek"
+      link: "#"
     },
     {
-      league: "الدوري الإنجليزي",
-      leagueIcon: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      team1: "ليفربول",
-      flag1: "",
-      team2: "أرسنال",
-      flag2: "",
-      score: "3 - 2",
-      time: "انتهت",
-      status: "ended",
-      link: ""
-    },
-    {
-      league: "الدوري الإسباني",
-      leagueIcon: "🇪🇸",
-      team1: "برشلونة",
-      flag1: "🔵",
-      team2: "أتلتيكو مدريد",
-      flag2: "🔴",
-      score: "- vs -",
-      time: "22:00",
+      league: "المجموعة ل - الجولة 2",
+      leagueIcon: "⚽",
+      team1: "بنما",
+      flag1: "🇵🇦",
+      team2: "كرواتيا",
+      flag2: "🇭🇷",
+      score: "vs",
+      time: "24/06 02:00 ص",
       status: "upcoming",
-      link: ""
+      link: "#"
+    },
+    {
+      league: "المجموعة ك - الجولة 2",
+      leagueIcon: "⚽",
+      team1: "كولومبيا",
+      flag1: "🇨🇴",
+      team2: "الكونغو الديمقراطية",
+      flag2: "🇨🇩",
+      score: "vs",
+      time: "24/06 05:00 ص",
+      status: "upcoming",
+      link: "#"
+    },
+    {
+      league: "المجموعة ب - الجولة 3",
+      leagueIcon: "⚽",
+      team1: "سويسرا",
+      flag1: "🇨🇭",
+      team2: "كندا",
+      flag2: "🇨🇦",
+      score: "vs",
+      time: "24/06 10:00 م",
+      status: "upcoming",
+      link: "#"
+    },
+    {
+      league: "المجموعة ب - الجولة 3",
+      leagueIcon: "⚽",
+      team1: "البوسنة والهرسك",
+      flag1: "🇧🇦",
+      team2: "قطر",
+      flag2: "🇶🇦",
+      score: "vs",
+      time: "24/06 10:00 م",
+      status: "upcoming",
+      link: 
     },
   ];
   /* ============================================================
